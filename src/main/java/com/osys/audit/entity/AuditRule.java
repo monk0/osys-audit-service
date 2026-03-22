@@ -1,9 +1,7 @@
 package com.osys.audit.entity;
 
-import jakarta.persistence.*;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -11,62 +9,58 @@ import java.time.LocalDateTime;
  * 审计规则实体
  */
 @Data
-@Entity
-@Table(name = "audit_rules", indexes = {
-    @Index(name = "idx_rule_type", columnList = "ruleType"),
-    @Index(name = "idx_status_priority", columnList = "status,priority")
-})
+@TableName("audit_rules")
 public class AuditRule {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
-    @Column(name = "rule_code", unique = true, nullable = false, length = 50)
+    @TableField("rule_code")
     private String ruleCode;
 
-    @Column(name = "rule_name", nullable = false, length = 100)
+    @TableField("rule_name")
     private String ruleName;
 
-    @Column(name = "rule_type", nullable = false, length = 20)
-    private String ruleType; // RISK/SENSITIVE/EXCEPTION
+    @TableField("rule_type")
+    private String ruleType;
 
-    @Column(name = "match_conditions", nullable = false, columnDefinition = "json")
-    private String matchConditions; // JSON格式
+    @TableField("match_conditions")
+    private String matchConditions;
 
-    @Column(name = "action_type", nullable = false, length = 20)
-    private String actionType; // ALERT/BLOCK/RECORD/NOTIFY
+    @TableField("action_type")
+    private String actionType;
 
-    @Column(name = "action_config", columnDefinition = "json")
+    @TableField("action_config")
     private String actionConfig;
 
-    @Column(name = "risk_level")
-    private Integer riskLevel = 1;
+    @TableField("risk_level")
+    private Integer riskLevel;
 
-    @Column(name = "status")
-    private Integer status = 1; // 0-禁用, 1-启用
+    @TableField("status")
+    private Integer status;
 
-    @Column(name = "priority")
-    private Integer priority = 100;
+    @TableField("priority")
+    private Integer priority;
 
-    @Column(name = "hit_count")
-    private Long hitCount = 0L;
+    @TableField("hit_count")
+    private Long hitCount;
 
-    @Column(name = "last_hit_time")
+    @TableField("last_hit_time")
     private LocalDateTime lastHitTime;
 
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
+    @TableField(value = "created_at", fill = FieldFill.INSERT)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at")
+    @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updatedAt;
 
     /**
      * 增加命中次数
      */
     public void incrementHitCount() {
+        if (this.hitCount == null) {
+            this.hitCount = 0L;
+        }
         this.hitCount++;
         this.lastHitTime = LocalDateTime.now();
     }

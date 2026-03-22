@@ -1,8 +1,7 @@
 package com.osys.audit.entity;
 
-import jakarta.persistence.*;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -10,50 +9,43 @@ import java.time.LocalDateTime;
  * 风险事件实体
  */
 @Data
-@Entity
-@Table(name = "risk_events", indexes = {
-    @Index(name = "idx_risk_level", columnList = "riskLevel"),
-    @Index(name = "idx_handle_status", columnList = "handleStatus"),
-    @Index(name = "idx_created_at", columnList = "createdAt")
-})
+@TableName("risk_events")
 public class RiskEvent {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
-    @Column(name = "audit_log_id", nullable = false)
+    @TableField("audit_log_id")
     private Long auditLogId;
 
-    @Column(name = "risk_level", nullable = false)
+    @TableField("risk_level")
     private Integer riskLevel;
 
-    @Column(name = "risk_type", nullable = false, length = 50)
+    @TableField("risk_type")
     private String riskType;
 
-    @Column(name = "risk_desc", length = 500)
+    @TableField("risk_desc")
     private String riskDesc;
 
-    @Column(name = "hit_rules", columnDefinition = "json")
+    @TableField("hit_rules")
     private String hitRules;
 
-    @Column(name = "handle_status")
-    private Integer handleStatus = 0; // 0-未处理, 1-处理中, 2-已处理, 3-已忽略
+    @TableField("handle_status")
+    private Integer handleStatus;
 
-    @Column(name = "handler_id")
+    @TableField("handler_id")
     private Long handlerId;
 
-    @Column(name = "handler_name", length = 64)
+    @TableField("handler_name")
     private String handlerName;
 
-    @Column(name = "handle_result", columnDefinition = "text")
+    @TableField("handle_result")
     private String handleResult;
 
-    @Column(name = "handle_time")
+    @TableField("handle_time")
     private LocalDateTime handleTime;
 
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
+    @TableField(value = "created_at", fill = FieldFill.INSERT)
     private LocalDateTime createdAt;
 
     /**
